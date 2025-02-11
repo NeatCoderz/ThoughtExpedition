@@ -5,10 +5,10 @@
 - 공유된 모든 것에 자유롭게 자신의 이해와 생각을 기록 합니다.
 
 ## 참여 인원
-- Duflow89
-- hei5enbug
-- nimkoes
-- ZeroDuck
+- `Duflow89`
+- `hei5enbug`
+- `nimkoes`
+- `ZeroDuck`
 
 ## 기간
 - 2025.02.20 ~
