@@ -1,0 +1,40 @@
+name: Cleanup Old Tags
+
+on:
+  schedule:
+    - cron: "0 0 * * 1"  # 매주 월요일 00:00 UTC (한국 시간 오전 9시)
+  workflow_dispatch:  # 수동 실행 가능
+
+jobs:
+  cleanup-tags:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 모든 태그 정보를 가져옴
+
+      - name: Fetch Tags and Sort
+        id: tags
+        run: |
+          echo "Fetching tags..."
+          TAGS=$(git tag --sort=-creatordate) # 생성 날짜 기준 최신순 정렬
+          TAG_LIST=($TAGS)
+
+          echo "Found ${#TAG_LIST[@]} tags"
+          
+          # 최신 태그 10개를 제외한 나머지를 삭제
+          if [ ${#TAG_LIST[@]} -gt 10 ]; then
+            DELETE_LIST=("${TAG_LIST[@]:10}")  # 10번째 이후 태그만 선택
+            echo "Deleting ${#DELETE_LIST[@]} old tags..."
+            for TAG in "${DELETE_LIST[@]}"; do
+              git push --delete origin $TAG
+              git tag -d $TAG
+            done
+          else
+            echo "Less than 10 tags, nothing to delete."
+          fi
+
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
