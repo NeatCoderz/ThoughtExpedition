@@ -1,0 +1,39 @@
+name: auto merge to main branch by tagging
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:  # 수동 실행 가능
+
+jobs:
+  merge-to-main:
+    runs-on: ubuntu-latest
+  
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check branch for tag
+        id: check_branch
+        run: |
+          TAG_BRANCH=$(git branch -r --contains ${{ github.ref }} | grep 'origin/reading' || true)
+          if [[ -z "$TAG_BRANCH" ]]; then
+            echo "Tag is not created from the reading branch. Exiting."
+            exit 1
+          fi
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Merge tag into main
+        run: |
+          git checkout main
+          git merge --no-ff --no-edit ${{ github.ref_name }}  # Merge Commit 방식
+          git push origin main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
