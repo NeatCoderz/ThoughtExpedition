@@ -9,16 +9,15 @@ const slack = new WebClient(process.env.SLACK_BOT_TOKEN);
 
 // 프로젝트 참여자 목록 (GitHub username과 Slack user ID 매핑)
 const teamMembers = {
-  'nimkoes': 'U01KDH93CQY',
-  'username2': 'SLACK_USER_ID_2',
+  'nimkoes': 'U01KDH93CQY'
   // 필요한 만큼 추가
 };
 
 // 프로젝트 설정
 const projectConfig = {
-  owner: 'NeatCoderz',
+  owner: 'NeatCoderz', // organization login
   repo: 'ThoughtExpedition',
-  projectNumber: Number.isInteger(Number(process.env.PROJECT_NUMBER)) ? parseInt(process.env.PROJECT_NUMBER, 10) : 1, // 환경 변수에서 프로젝트 번호 가져오기, NaN 방지
+  projectNumber: 1     // confirmed ProjectV2 number
 };
 
 async function getProjectFields() {
