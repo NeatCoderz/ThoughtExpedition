@@ -1,0 +1,41 @@
+name: Issue Label Notification
+
+on:
+  schedule:
+    - cron: '0 9 * * *'  # 매일 오전 9시에 실행
+  workflow_dispatch:
+    inputs:
+      debug:
+        description: '디버그 모드로 실행'
+        required: false
+        default: false
+        type: boolean
+      target_issue:
+        description: '특정 이슈 번호만 체크 (비워두면 모든 이슈 체크)'
+        required: false
+        type: string
+
+jobs:
+  check-labels-and-notify:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install @octokit/rest @slack/web-api
+
+      - name: Check issues and send notifications
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
+          DEBUG_MODE: ${{ inputs.debug }}
+          TARGET_ISSUE: ${{ inputs.target_issue }}
+        run: node scripts/check-issue-labels.js 
