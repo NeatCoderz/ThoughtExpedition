@@ -94,18 +94,18 @@ async function getIssuesInProject() {
                         name
                       }
                     }
-                    fieldValues(first: 20) {
-                      nodes {
-                        ... on ProjectV2ItemFieldTextValue {
-                          text
-                        }
-                        ... on ProjectV2ItemFieldSingleSelectValue {
-                          optionId
-                        }
-                        ... on ProjectV2ItemFieldIterationValue {
-                          iterationId
-                        }
-                      }
+                  }
+                }
+                fieldValues(first: 20) {
+                  nodes {
+                    ... on ProjectV2ItemFieldTextValue {
+                      text
+                    }
+                    ... on ProjectV2ItemFieldSingleSelectValue {
+                      optionId
+                    }
+                    ... on ProjectV2ItemFieldIterationValue {
+                      iterationId
                     }
                   }
                 }
@@ -132,7 +132,7 @@ async function getIssuesInProject() {
         title: item.content.title,
         url: item.content.url,
         labels: item.content.labels.nodes.map(label => label.name),
-        fieldValues: item.content.fieldValues.nodes
+        fieldValues: item.fieldValues.nodes
       }));
   } catch (error) {
     console.error('Error fetching issues in project:', error);
@@ -168,6 +168,15 @@ async function checkIssues() {
 
     // 프로젝트의 이슈들 가져오기
     const issues = await getIssuesInProject();
+
+    if (debugMode) {
+      console.log('All issues from project:');
+      issues.forEach(issue => {
+        console.log(`#${issue.number}: ${issue.title}`);
+        console.log('- Labels:', issue.labels);
+        console.log('- Field Values:', issue.fieldValues);
+      });
+    }
 
     // In Progress 상태의 이슈만 필터링
     const inProgressIssues = issues.filter(issue => {

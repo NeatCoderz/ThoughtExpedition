@@ -39,4 +39,20 @@ jobs:
           PROJECT_NUMBER: ${{ secrets.PROJECT_NUMBER }}
           DEBUG_MODE: ${{ inputs.debug }}
           TARGET_ISSUE: ${{ inputs.target_issue }}
-        run: node scripts/check-issue-labels.js
+        run: |
+          node -e "
+          const { checkIssues } = require('./scripts/check-issue-labels.js');
+          const debugMode = process.env.DEBUG_MODE === 'true';
+          (async () => {
+            const issues = await checkIssues.getIssuesInProject();
+            if (debugMode) {
+              console.log('All issues from project:');
+              issues.forEach(issue => {
+                console.log(\`#\${issue.number}: \${issue.title}\`);
+                console.log('- Labels:', issue.labels);
+                console.log('- Field Values:', issue.fieldValues);
+              });
+            }
+            await checkIssues();
+          })();
+          "
