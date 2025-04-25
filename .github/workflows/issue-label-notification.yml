@@ -41,10 +41,10 @@ jobs:
           TARGET_ISSUE: ${{ inputs.target_issue }}
         run: |
           node -e "
-          const { checkIssues } = require('./scripts/check-issue-labels.js');
+          const { checkIssues, getIssuesInProject } = require('./scripts/check-issue-labels.js');
           const debugMode = process.env.DEBUG_MODE === 'true';
           (async () => {
-            const issues = await checkIssues.getIssuesInProject();
+            const issues = await getIssuesInProject();
             if (debugMode) {
               console.log('All issues from project:');
               issues.forEach(issue => {

@@ -226,4 +226,9 @@ async function checkIssues() {
   }
 }
 
-checkIssues(); 
+checkIssues();
+
+module.exports = {
+  checkIssues,
+  getIssuesInProject
+};
