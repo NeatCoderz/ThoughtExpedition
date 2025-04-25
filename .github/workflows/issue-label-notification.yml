@@ -36,6 +36,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
           SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
+          PROJECT_NUMBER: ${{ secrets.PROJECT_NUMBER }}
           DEBUG_MODE: ${{ inputs.debug }}
           TARGET_ISSUE: ${{ inputs.target_issue }}
-        run: node scripts/check-issue-labels.js 
+        run: node scripts/check-issue-labels.js
