@@ -9,7 +9,10 @@ const slack = new WebClient(process.env.SLACK_BOT_TOKEN);
 
 // 프로젝트 참여자 목록 (GitHub username과 Slack user ID 매핑)
 const teamMembers = {
-  'nimkoes': 'U01KDH93CQY'
+  'nimkoes': 'U01KDH93CQY',
+  'Duflow89': 'U06D6JSK211',
+  'hei5enbug': 'U06FPS3ET6X',
+  'ZeroDuck': 'U06DVGF98QG'
   // 필요한 만큼 추가
 };
 
@@ -215,7 +218,7 @@ async function checkIssues() {
 
         await slack.chat.postMessage({
           channel: process.env.SLACK_CHANNEL_ID,
-          text: `🚨 *독서 미완료 알림*\n이슈 #${issue.number}: ${issue.title}\n피드백을 위해 생각을 공유 해주세요: ${mentions}\n${issue.url}`
+          text: `🚨 *미완료 알림*\n이슈 #${issue.number}: ${issue.title}\n${mentions}\n여러분의 생각을 기다리고 있습니다.\n${issue.url}`
         });
       }
     }
