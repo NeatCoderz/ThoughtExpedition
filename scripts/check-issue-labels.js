@@ -18,7 +18,7 @@ const teamMembers = {
 const projectConfig = {
   owner: 'NeatCoderz',
   repo: 'ThoughtExpedition',
-  projectNumber: process.env.GITHUB_PROJECT_NUMBER, // 환경 변수에서 프로젝트 번호 가져오기
+  projectNumber: parseInt(process.env.PROJECT_NUMBER, 10), // 환경 변수에서 프로젝트 번호 가져오기
 };
 
 async function getProjectFields() {
