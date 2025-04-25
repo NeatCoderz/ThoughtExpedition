@@ -237,7 +237,10 @@ async function checkIssues() {
     }
 }
 
-checkIssues();
+
+if (require.main === module) {
+    checkIssues();
+}
 
 module.exports = {
     checkIssues,
