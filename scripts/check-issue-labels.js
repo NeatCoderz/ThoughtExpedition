@@ -119,6 +119,12 @@ async function getIssuesInProject() {
       number: projectConfig.projectNumber
     });
 
+    const debugMode = process.env.DEBUG_MODE === 'true';
+    if (debugMode) {
+      console.log('[DEBUG] Raw project items response:');
+      console.dir(project, { depth: null });
+    }
+
     if (!project?.organization?.projectV2?.items?.nodes) {
       console.error('GraphQL 응답에 필요한 item 정보가 없습니다');
       console.dir(project, { depth: null });
@@ -131,7 +137,7 @@ async function getIssuesInProject() {
         number: item.content.number,
         title: item.content.title,
         url: item.content.url,
-        labels: item.content.labels.nodes.map(label => label.name),
+        labels: item.content.labels?.nodes?.map(label => label.name) || [],
         fieldValues: item.fieldValues.nodes
       }));
   } catch (error) {
