@@ -9,7 +9,7 @@ const slack = new WebClient(process.env.SLACK_BOT_TOKEN);
 
 // 프로젝트 참여자 목록 (GitHub username과 Slack user ID 매핑)
 const teamMembers = {
-  'username1': 'SLACK_USER_ID_1',
+  'nimkoes': 'U01KDH93CQY',
   'username2': 'SLACK_USER_ID_2',
   // 필요한 만큼 추가
 };
