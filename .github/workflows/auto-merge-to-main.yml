@@ -21,7 +21,7 @@ jobs:
         run: |
           TAG_BRANCH=$(git branch -r --contains ${{ github.ref }} | grep 'origin/main' || true)
           if [[ -z "$TAG_BRANCH" ]]; then
-            echo "Tag is not created from the reading branch. Exiting."
+            echo "Tag is not created from the main branch. Exiting."
             exit 1
           fi
 
