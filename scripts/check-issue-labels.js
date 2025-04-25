@@ -19,10 +19,9 @@ const projectConfig = {
   owner: 'NeatCoderz',
   repo: 'ThoughtExpedition',
   projectNumber: 1, // 프로젝트 번호 (URL에서 확인 가능)
-  inProgressColumnId: 'in_progress_column_id' // In Progress 컬럼의 ID
 };
 
-async function getProjectColumns() {
+async function getProjectFields() {
   try {
     // 프로젝트 정보 가져오기
     const { data: project } = await octokit.graphql(`
@@ -30,10 +29,31 @@ async function getProjectColumns() {
         repository(owner: $owner, name: $repo) {
           projectV2(number: $number) {
             id
-            columns(first: 20) {
+            fields(first: 20) {
               nodes {
-                id
-                name
+                ... on ProjectV2Field {
+                  id
+                  name
+                  dataType
+                }
+                ... on ProjectV2IterationField {
+                  id
+                  name
+                  configuration {
+                    iterations {
+                      id
+                      title
+                    }
+                  }
+                }
+                ... on ProjectV2SingleSelectField {
+                  id
+                  name
+                  options {
+                    id
+                    name
+                  }
+                }
               }
             }
           }
@@ -45,19 +65,19 @@ async function getProjectColumns() {
       number: projectConfig.projectNumber
     });
 
-    return project.repository.projectV2.columns.nodes;
+    return project.repository.projectV2.fields.nodes;
   } catch (error) {
-    console.error('Error fetching project columns:', error);
+    console.error('Error fetching project fields:', error);
     throw error;
   }
 }
 
-async function getIssuesInColumn(columnId) {
+async function getIssuesInProject() {
   try {
-    const { data: column } = await octokit.graphql(`
-      query($columnId: ID!) {
-        node(id: $columnId) {
-          ... on ProjectV2Column {
+    const { data: project } = await octokit.graphql(`
+      query($owner: String!, $repo: String!, $number: Int!) {
+        repository(owner: $owner, name: $repo) {
+          projectV2(number: $number) {
             items(first: 100) {
               nodes {
                 content {
@@ -71,6 +91,19 @@ async function getIssuesInColumn(columnId) {
                         name
                       }
                     }
+                    fieldValues(first: 20) {
+                      nodes {
+                        ... on ProjectV2ItemFieldTextValue {
+                          text
+                        }
+                        ... on ProjectV2ItemFieldSingleSelectValue {
+                          optionId
+                        }
+                        ... on ProjectV2ItemFieldIterationValue {
+                          iterationId
+                        }
+                      }
+                    }
                   }
                 }
               }
@@ -79,20 +112,23 @@ async function getIssuesInColumn(columnId) {
         }
       }
     `, {
-      columnId: columnId
+      owner: projectConfig.owner,
+      repo: projectConfig.repo,
+      number: projectConfig.projectNumber
     });
 
-    return column.node.items.nodes
+    return project.repository.projectV2.items.nodes
       .filter(item => item.content)
       .map(item => ({
         id: item.content.id,
         number: item.content.number,
         title: item.content.title,
         url: item.content.url,
-        labels: item.content.labels.nodes.map(label => label.name)
+        labels: item.content.labels.nodes.map(label => label.name),
+        fieldValues: item.content.fieldValues.nodes
       }));
   } catch (error) {
-    console.error('Error fetching issues in column:', error);
+    console.error('Error fetching issues in project:', error);
     throw error;
   }
 }
@@ -107,29 +143,42 @@ async function checkIssues() {
       console.log('Target issue:', targetIssue || 'All issues');
     }
 
-    // 프로젝트 컬럼 정보 가져오기
-    const columns = await getProjectColumns();
-    const inProgressColumn = columns.find(col => col.name.toLowerCase() === 'in progress');
-    
-    if (!inProgressColumn) {
-      console.error('In Progress column not found');
+    // 프로젝트 필드 정보 가져오기
+    const fields = await getProjectFields();
+    const statusField = fields.find(field => 
+      field.name.toLowerCase() === 'status' || 
+      field.name.toLowerCase() === 'state'
+    );
+
+    if (!statusField) {
+      console.error('Status field not found in project');
       return;
     }
 
     if (debugMode) {
-      console.log('Found In Progress column:', inProgressColumn);
+      console.log('Found status field:', statusField);
     }
 
-    // In Progress 컬럼의 이슈들 가져오기
-    const issues = await getIssuesInColumn(inProgressColumn.id);
+    // 프로젝트의 이슈들 가져오기
+    const issues = await getIssuesInProject();
+
+    // In Progress 상태의 이슈만 필터링
+    const inProgressIssues = issues.filter(issue => {
+      const statusValue = issue.fieldValues.find(value => 
+        value.optionId === statusField.options.find(opt => 
+          opt.name.toLowerCase() === 'in progress'
+        )?.id
+      );
+      return statusValue !== undefined;
+    });
 
     // 특정 이슈만 필터링
     const targetIssues = targetIssue 
-      ? issues.filter(issue => issue.number.toString() === targetIssue)
-      : issues;
+      ? inProgressIssues.filter(issue => issue.number.toString() === targetIssue)
+      : inProgressIssues;
 
     if (debugMode) {
-      console.log(`Found ${targetIssues.length} issues in In Progress column`);
+      console.log(`Found ${targetIssues.length} issues in In Progress state`);
     }
 
     for (const issue of targetIssues) {
@@ -151,7 +200,7 @@ async function checkIssues() {
 
         await slack.chat.postMessage({
           channel: process.env.SLACK_CHANNEL_ID,
-          text: `🚨 *라벨 누락 알림*\n이슈 #${issue.number}: ${issue.title}\n다음 멤버들의 라벨이 누락되었습니다: ${mentions}\n${issue.url}`
+          text: `🚨 *독서 미완료 알림*\n이슈 #${issue.number}: ${issue.title}\n독서 완료 라벨이 누락되었습니다: ${mentions}\n${issue.url}`
         });
       }
     }
