@@ -23,7 +23,7 @@ const projectConfig = {
 async function getProjectFields() {
   try {
     // 프로젝트 정보 가져오기
-    const { data: project } = await octokit.graphql(`
+    const project = await octokit.graphql(`
       query($owner: String!, $number: Int!) {
         organization(login: $owner) {
           projectV2(number: $number) {
@@ -63,6 +63,11 @@ async function getProjectFields() {
       number: projectConfig.projectNumber
     });
 
+    if (!project?.organization?.projectV2) {
+      console.error('GraphQL 응답에 organization.projectV2가 없습니다');
+      console.dir(project, { depth: null });
+      throw new Error('Invalid GraphQL response structure');
+    }
     return project.organization.projectV2.fields.nodes;
   } catch (error) {
     console.error('Error fetching project fields:', error);
@@ -72,7 +77,7 @@ async function getProjectFields() {
 
 async function getIssuesInProject() {
   try {
-    const { data: project } = await octokit.graphql(`
+    const project = await octokit.graphql(`
       query($owner: String!, $number: Int!) {
         organization(login: $owner) {
           projectV2(number: $number) {
@@ -114,6 +119,11 @@ async function getIssuesInProject() {
       number: projectConfig.projectNumber
     });
 
+    if (!project?.organization?.projectV2?.items?.nodes) {
+      console.error('GraphQL 응답에 필요한 item 정보가 없습니다');
+      console.dir(project, { depth: null });
+      throw new Error('Invalid project item response');
+    }
     return project.organization.projectV2.items.nodes
       .filter(item => item.content)
       .map(item => ({
