@@ -119,12 +119,6 @@ async function getIssuesInProject() {
       number: projectConfig.projectNumber
     });
 
-    const debugMode = process.env.DEBUG_MODE === 'true';
-    if (debugMode) {
-      console.log('[DEBUG] Raw project items response:');
-      console.dir(project, { depth: null });
-    }
-
     if (!project?.organization?.projectV2?.items?.nodes) {
       console.error('GraphQL 응답에 필요한 item 정보가 없습니다');
       console.dir(project, { depth: null });
@@ -180,7 +174,6 @@ async function checkIssues() {
       issues.forEach(issue => {
         console.log(`#${issue.number}: ${issue.title}`);
         console.log('- Labels:', issue.labels);
-        console.log('- Field Values:', issue.fieldValues);
       });
     }
 
@@ -222,7 +215,7 @@ async function checkIssues() {
 
         await slack.chat.postMessage({
           channel: process.env.SLACK_CHANNEL_ID,
-          text: `🚨 *독서 미완료 알림*\n이슈 #${issue.number}: ${issue.title}\n독서 완료 라벨이 누락되었습니다: ${mentions}\n${issue.url}`
+          text: `🚨 *독서 미완료 알림*\n이슈 #${issue.number}: ${issue.title}\n피드백을 위해 생각을 공유 해주세요: ${mentions}\n${issue.url}`
         });
       }
     }
