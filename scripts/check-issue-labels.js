@@ -194,13 +194,20 @@ async function checkIssues() {
             console.log(`Found ${inProgressIssues.length} issues in In Progress state`);
         }
 
-        const issueLabels = inProgressIssues.labels;
+        // 특정 이슈가 정확히 하나인지 확인
+        if (inProgressIssues.length !== 1) {
+            throw new Error(`Expected exactly one In Progress issue, found ${inProgressIssues.length}`);
+        }
+        const issue = inProgressIssues[0];
+
+
+        const issueLabels = issue.labels;
         const unlabeledMembers = Object.keys(teamMembers).filter(
             member => !issueLabels.includes(member)
         );
 
         if (debugMode) {
-            console.log(`Issue #${inProgressIssues.number}:`);
+            console.log(`Issue #${issue.number}:`);
             console.log('- Labels:', issueLabels);
             console.log('- Unlabeled members:', unlabeledMembers);
         }
@@ -212,7 +219,7 @@ async function checkIssues() {
 
             await slack.chat.postMessage({
                 channel: process.env.SLACK_CHANNEL_ID,
-                text: `🚨 *미완료 알림*\n이슈 #${inProgressIssues.number}: ${inProgressIssues.title}\n${mentions}\n여러분의 생각을 기다리고 있습니다.\n${inProgressIssues.url}`
+                text: `🚨 *미완료 알림*\n이슈 #${issue.number}: ${issue.title}\n${mentions}\n여러분의 생각을 기다리고 있습니다.\n${issue.url}`
             });
         } else {
             const mentions = issueLabels
@@ -221,7 +228,7 @@ async function checkIssues() {
 
             await slack.chat.postMessage({
                 channel: process.env.SLACK_CHANNEL_ID,
-                text: `🚨 *피드백 요청*\n이슈 #${inProgressIssues.number}: ${inProgressIssues.title}\n${mentions}\n모든 분이 의견을 공유해주셨습니다.\n이제 서로의 생각에 피드백을 주고받으며 더 깊이 있는 논의를 이어가 주세요!\n${inProgressIssues.url}`
+                text: `🚨 *피드백 요청*\n이슈 #${issue.number}: ${issue.title}\n${mentions}\n모든 분이 의견을 공유해주셨습니다.\n이제 서로의 생각에 피드백을 주고받으며 더 깊이 있는 논의를 이어가 주세요!\n${issue.url}`
             });
         }
     } catch (error) {
