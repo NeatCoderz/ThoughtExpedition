@@ -19,7 +19,7 @@ jobs:
       - name: Check branch for tag
         id: check_branch
         run: |
-          TAG_BRANCH=$(git branch -r --contains ${{ github.ref }} | grep 'origin/reading' || true)
+          TAG_BRANCH=$(git branch -r --contains ${{ github.ref }} | grep 'origin/main' || true)
           if [[ -z "$TAG_BRANCH" ]]; then
             echo "Tag is not created from the reading branch. Exiting."
             exit 1
