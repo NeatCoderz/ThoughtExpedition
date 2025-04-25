@@ -17,16 +17,15 @@ const teamMembers = {
 // 프로젝트 설정
 const projectConfig = {
   owner: 'NeatCoderz',
-  repo: 'ThoughtExpedition',
-  projectNumber: 1, // 프로젝트 번호 (URL에서 확인 가능)
+  projectNumber: 1
 };
 
 async function getProjectFields() {
   try {
     // 프로젝트 정보 가져오기
     const { data: project } = await octokit.graphql(`
-      query($owner: String!, $repo: String!, $number: Int!) {
-        repository(owner: $owner, name: $repo) {
+      query($owner: String!, $number: Int!) {
+        organization(login: $owner) {
           projectV2(number: $number) {
             id
             fields(first: 20) {
@@ -61,11 +60,10 @@ async function getProjectFields() {
       }
     `, {
       owner: projectConfig.owner,
-      repo: projectConfig.repo,
       number: projectConfig.projectNumber
     });
 
-    return project.repository.projectV2.fields.nodes;
+    return project.organization.projectV2.fields.nodes;
   } catch (error) {
     console.error('Error fetching project fields:', error);
     throw error;
@@ -75,8 +73,8 @@ async function getProjectFields() {
 async function getIssuesInProject() {
   try {
     const { data: project } = await octokit.graphql(`
-      query($owner: String!, $repo: String!, $number: Int!) {
-        repository(owner: $owner, name: $repo) {
+      query($owner: String!, $number: Int!) {
+        organization(login: $owner) {
           projectV2(number: $number) {
             items(first: 100) {
               nodes {
@@ -113,11 +111,10 @@ async function getIssuesInProject() {
       }
     `, {
       owner: projectConfig.owner,
-      repo: projectConfig.repo,
       number: projectConfig.projectNumber
     });
 
-    return project.repository.projectV2.items.nodes
+    return project.organization.projectV2.items.nodes
       .filter(item => item.content)
       .map(item => ({
         id: item.content.id,
