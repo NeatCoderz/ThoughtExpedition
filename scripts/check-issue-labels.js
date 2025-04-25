@@ -18,7 +18,7 @@ const teamMembers = {
 const projectConfig = {
   owner: 'NeatCoderz',
   repo: 'ThoughtExpedition',
-  projectNumber: parseInt(process.env.PROJECT_NUMBER, 10), // 환경 변수에서 프로젝트 번호 가져오기
+  projectNumber: Number.isInteger(Number(process.env.PROJECT_NUMBER)) ? parseInt(process.env.PROJECT_NUMBER, 10) : 1, // 환경 변수에서 프로젝트 번호 가져오기, NaN 방지
 };
 
 async function getProjectFields() {
