@@ -24,7 +24,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.PERSONAL_GH_TOKEN }}
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-          SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID_BOB }}
+          SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
           ISSUE_TITLE: ${{ github.event.issue.title }}
           COMMENT_BODY: ${{ github.event.comment.body }}
@@ -63,7 +63,7 @@ jobs:
                 text: '💬 *새 댓글이 달렸습니다*\n\n' +
                       '*이슈:* #' + process.env.ISSUE_NUMBER + ' ' + process.env.ISSUE_TITLE + '\n' +
                       '*작성자:* ' + process.env.COMMENTER + '\n' +
-                      '*내용:* ' + process.env.COMMENT_BODY + '\n\n' +
+                      '*내용* \n' + process.env.COMMENT_BODY + '\n\n' +
                       issue.data.html_url + '#issuecomment-' + process.env.COMMENT_ID
               });
               
