@@ -2,9 +2,10 @@ import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 import Link from 'next/link';
-import MDRenderer from '../../components/MDRenderer';
+import { serialize } from 'next-mdx-remote/serialize';
+import { MDXRemote } from 'next-mdx-remote';
 
-export default function Book({ content, data, filePath }) {
+export default function Book({ source, data, filePath }) {
   const pathParts = filePath.split('/');
   
   return (
@@ -22,9 +23,9 @@ export default function Book({ content, data, filePath }) {
           {pathParts.slice(0, -1).join(' / ')}
         </div>
       </div>
-      <h1 className="text-4xl font-bold mb-8">{pathParts[pathParts.length - 1]}</h1>
+      <h1 className="text-4xl font-bold mb-8">{data.title || pathParts[pathParts.length - 1]}</h1>
       <div className="prose prose-lg max-w-none">
-        <MDRenderer content={content} />
+        <MDXRemote {...source} />
       </div>
     </div>
   );
@@ -40,8 +41,10 @@ function getAllFilePaths(dir, fileList = [], basePath = '') {
     
     if (stats.isDirectory()) {
       getAllFilePaths(fullPath, fileList, relativePath);
-    } else if (item.startsWith('reading-cycle')) {
-      fileList.push(relativePath);
+    } else if (item.endsWith('.md') || item.endsWith('.mdx')) {
+      // 파일 경로를 URL 친화적인 형식으로 변환
+      const urlPath = relativePath.replace(/\\/g, '/');
+      fileList.push(urlPath);
     }
   });
   
@@ -52,9 +55,13 @@ export async function getStaticPaths() {
   const booksDirectory = path.join(process.cwd(), 'books');
   const filePaths = getAllFilePaths(booksDirectory);
   
-  const paths = filePaths.map(filePath => ({
-    params: { slug: filePath }
-  }));
+  // 각 파일 경로를 slug 배열로 변환
+  const paths = filePaths.map(filePath => {
+    const slug = filePath.split('/');
+    return {
+      params: { slug }
+    };
+  });
 
   return {
     paths,
@@ -63,16 +70,31 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }) {
-  const filePath = params.slug;
+  const { slug } = params;
+  const filePath = slug.join('/');
   const fullPath = path.join(process.cwd(), 'books', filePath);
-  const fileContent = fs.readFileSync(fullPath, 'utf8');
-  const { content, data } = matter(fileContent);
+  
+  try {
+    const fileContent = fs.readFileSync(fullPath, 'utf8');
+    const { content, data } = matter(fileContent);
+    
+    const mdxSource = await serialize(content, {
+      mdxOptions: {
+        development: process.env.NODE_ENV === 'development',
+      },
+    });
 
-  return {
-    props: {
-      content,
-      data: data || {},
-      filePath,
-    },
-  };
+    return {
+      props: {
+        source: mdxSource,
+        data: data || {},
+        filePath,
+      },
+    };
+  } catch (error) {
+    console.error('Error reading file:', error);
+    return {
+      notFound: true,
+    };
+  }
 } 
