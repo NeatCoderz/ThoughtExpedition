@@ -113,7 +113,7 @@ const MDRenderer = ({ content }) => {
             </div>
           </div>
           
-          <div className="prose prose-invert max-w-none mb-6">
+          <div className="prose prose-invert max-w-none mb-6 leading-relaxed">
             {renderMarkdown(card.content)}
           </div>
           
@@ -129,7 +129,7 @@ const MDRenderer = ({ content }) => {
                       <div className="text-white text-sm font-medium">{comment.author || 'Unknown'}</div>
                     </div>
                   </div>
-                  <div className="prose prose-invert max-w-none text-sm">
+                  <div className="prose prose-invert max-w-none text-sm leading-relaxed">
                     {renderMarkdown(comment.content)}
                   </div>
                 </div>
