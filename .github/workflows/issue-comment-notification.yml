@@ -1,0 +1,70 @@
+name: Issue Comment Notification
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  notify-comment:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install @octokit/rest @slack/web-api
+
+      - name: Send Slack notification
+        env:
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_GH_TOKEN }}
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID_BOB }}
+        run: |
+          node -e "
+          const { Octokit } = require('@octokit/rest');
+          const { WebClient } = require('@slack/web-api');
+          
+          const octokit = new Octokit({
+            auth: process.env.GITHUB_TOKEN
+          });
+          
+          const slack = new WebClient(process.env.SLACK_BOT_TOKEN);
+          
+          (async () => {
+            try {
+              // 이슈 정보 가져오기
+              const issue = await octokit.rest.issues.get({
+                owner: '${{ github.repository_owner }}',
+                repo: '${{ github.event.repository.name }}',
+                issue_number: ${{ github.event.issue.number }}
+              });
+              
+              // 댓글 작성자 정보 가져오기
+              const commenter = await octokit.rest.users.getByUsername({
+                username: '${{ github.event.comment.user.login }}'
+              });
+              
+              // 이슈 작성자 정보 가져오기
+              const issueAuthor = await octokit.rest.users.getByUsername({
+                username: '${{ github.event.issue.user.login }}'
+              });
+              
+              // 슬랙 메시지 전송
+              await slack.chat.postMessage({
+                channel: process.env.SLACK_CHANNEL_ID,
+                text: `💬 *새 댓글이 달렸습니다*\n\n*이슈:* #${issue.data.number} ${issue.data.title}\n*작성자:* ${commenter.data.login}\n*내용:* ${{ github.event.comment.body }}\n\n${issue.data.html_url}#issuecomment-${{ github.event.comment.id }}`
+              });
+              
+              console.log('슬랙 알림이 성공적으로 전송되었습니다.');
+            } catch (error) {
+              console.error('알림 전송 중 오류 발생:', error);
+              process.exit(1);
+            }
+          })();
+          " 
