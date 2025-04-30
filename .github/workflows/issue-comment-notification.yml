@@ -25,6 +25,13 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.PERSONAL_GH_TOKEN }}
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
           SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID_BOB }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          COMMENT_BODY: ${{ github.event.comment.body }}
+          COMMENT_ID: ${{ github.event.comment.id }}
+          COMMENTER: ${{ github.event.comment.user.login }}
+          REPO_OWNER: ${{ github.repository_owner }}
+          REPO_NAME: ${{ github.event.repository.name }}
         run: |
           node -e "
           const { Octokit } = require('@octokit/rest');
@@ -40,25 +47,24 @@ jobs:
             try {
               // 이슈 정보 가져오기
               const issue = await octokit.rest.issues.get({
-                owner: '${{ github.repository_owner }}',
-                repo: '${{ github.event.repository.name }}',
-                issue_number: ${{ github.event.issue.number }}
+                owner: process.env.REPO_OWNER,
+                repo: process.env.REPO_NAME,
+                issue_number: parseInt(process.env.ISSUE_NUMBER)
               });
               
               // 댓글 작성자 정보 가져오기
               const commenter = await octokit.rest.users.getByUsername({
-                username: '${{ github.event.comment.user.login }}'
-              });
-              
-              // 이슈 작성자 정보 가져오기
-              const issueAuthor = await octokit.rest.users.getByUsername({
-                username: '${{ github.event.issue.user.login }}'
+                username: process.env.COMMENTER
               });
               
               // 슬랙 메시지 전송
               await slack.chat.postMessage({
                 channel: process.env.SLACK_CHANNEL_ID,
-                text: `💬 *새 댓글이 달렸습니다*\n\n*이슈:* #${issue.data.number} ${issue.data.title}\n*작성자:* ${commenter.data.login}\n*내용:* ${{ github.event.comment.body }}\n\n${issue.data.html_url}#issuecomment-${{ github.event.comment.id }}`
+                text: '💬 *새 댓글이 달렸습니다*\n\n' +
+                      '*이슈:* #' + process.env.ISSUE_NUMBER + ' ' + process.env.ISSUE_TITLE + '\n' +
+                      '*작성자:* ' + process.env.COMMENTER + '\n' +
+                      '*내용:* ' + process.env.COMMENT_BODY + '\n\n' +
+                      issue.data.html_url + '#issuecomment-' + process.env.COMMENT_ID
               });
               
               console.log('슬랙 알림이 성공적으로 전송되었습니다.');
