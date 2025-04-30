@@ -40,7 +40,7 @@ const TreeNode = ({ items, level }) => {
             </div>
           ) : (
             item.name.startsWith('reading-cycle') && (
-              <Link href={`/books/${item.path}`}>
+              <Link href={`/books/${item.path.replace(/\.md$/, '')}`}>
                 <div className="flex items-center space-x-2 pl-6 hover:bg-gray-100 rounded px-2 py-1 cursor-pointer">
                   <span className="w-4">📄</span>
                   <span>{item.name}</span>
