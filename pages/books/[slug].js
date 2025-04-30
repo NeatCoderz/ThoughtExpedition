@@ -1,0 +1,78 @@
+import fs from 'fs';
+import path from 'path';
+import matter from 'gray-matter';
+import Link from 'next/link';
+import MDRenderer from '../../components/MDRenderer';
+
+export default function Book({ content, data, filePath }) {
+  const pathParts = filePath.split('/');
+  
+  return (
+    <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div className="mb-8">
+        <Link href="/">
+          <div className="text-blue-600 hover:text-blue-800 cursor-pointer inline-flex items-center">
+            <span className="mr-2">←</span>
+            홈으로 돌아가기
+          </div>
+        </Link>
+      </div>
+      <div className="mb-4">
+        <div className="text-gray-600">
+          {pathParts.slice(0, -1).join(' / ')}
+        </div>
+      </div>
+      <h1 className="text-4xl font-bold mb-8">{pathParts[pathParts.length - 1]}</h1>
+      <div className="prose prose-lg max-w-none">
+        <MDRenderer content={content} />
+      </div>
+    </div>
+  );
+}
+
+function getAllFilePaths(dir, fileList = [], basePath = '') {
+  const items = fs.readdirSync(dir);
+  
+  items.forEach(item => {
+    const fullPath = path.join(dir, item);
+    const relativePath = path.join(basePath, item);
+    const stats = fs.statSync(fullPath);
+    
+    if (stats.isDirectory()) {
+      getAllFilePaths(fullPath, fileList, relativePath);
+    } else if (item.startsWith('reading-cycle')) {
+      fileList.push(relativePath);
+    }
+  });
+  
+  return fileList;
+}
+
+export async function getStaticPaths() {
+  const booksDirectory = path.join(process.cwd(), 'books');
+  const filePaths = getAllFilePaths(booksDirectory);
+  
+  const paths = filePaths.map(filePath => ({
+    params: { slug: filePath }
+  }));
+
+  return {
+    paths,
+    fallback: false,
+  };
+}
+
+export async function getStaticProps({ params }) {
+  const filePath = params.slug;
+  const fullPath = path.join(process.cwd(), 'books', filePath);
+  const fileContent = fs.readFileSync(fullPath, 'utf8');
+  const { content, data } = matter(fileContent);
+
+  return {
+    props: {
+      content,
+      data: data || {},
+      filePath,
+    },
+  };
+} 
