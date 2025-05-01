@@ -103,13 +103,25 @@ const MDRenderer = ({ content }) => {
   return (
     <div className="space-y-8">
       {cards.map((card, index) => (
-        <div key={index} className="bg-gray-800 rounded-lg p-6 shadow-lg">
+        <div key={index} className={`rounded-lg p-6 shadow-lg ${
+          card.author === 'SUMMARY' 
+            ? 'bg-indigo-950 border border-indigo-800' 
+            : 'bg-gray-800'
+        }`}>
           <div className="flex items-center mb-4">
-            <div className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center text-white font-bold">
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold ${
+              card.author === 'SUMMARY'
+                ? 'bg-indigo-900'
+                : 'bg-gray-700'
+            }`}>
               {card.author?.charAt(0)?.toUpperCase() || '?'}
             </div>
             <div className="ml-3">
-              <div className="text-white font-medium">{card.author || 'Unknown'}</div>
+              <div className={`font-medium ${
+                card.author === 'SUMMARY'
+                  ? 'text-indigo-200'
+                  : 'text-white'
+              }`}>{card.author || 'Unknown'}</div>
             </div>
           </div>
           
@@ -120,13 +132,25 @@ const MDRenderer = ({ content }) => {
           {card.comments?.length > 0 && (
             <div className="mt-6 space-y-4">
               {card.comments.map((comment, commentIndex) => (
-                <div key={commentIndex} className="bg-gray-700 rounded-lg p-4">
+                <div key={commentIndex} className={`rounded-lg p-4 ${
+                  card.author === 'SUMMARY'
+                    ? 'bg-indigo-900'
+                    : 'bg-gray-700'
+                }`}>
                   <div className="flex items-center mb-2">
-                    <div className="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center text-white text-sm font-bold">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold ${
+                      card.author === 'SUMMARY'
+                        ? 'bg-indigo-800'
+                        : 'bg-gray-600'
+                    }`}>
                       {comment.author?.charAt(0)?.toUpperCase() || '?'}
                     </div>
                     <div className="ml-2">
-                      <div className="text-white text-sm font-medium">{comment.author || 'Unknown'}</div>
+                      <div className={`text-sm font-medium ${
+                        card.author === 'SUMMARY'
+                          ? 'text-indigo-200'
+                          : 'text-white'
+                      }`}>{comment.author || 'Unknown'}</div>
                     </div>
                   </div>
                   <div className="prose prose-invert max-w-none text-sm leading-relaxed">
