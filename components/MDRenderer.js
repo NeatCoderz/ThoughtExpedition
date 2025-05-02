@@ -12,46 +12,38 @@ const MDRenderer = ({ content }) => {
     let currentCard = null;
     let currentSection = null;
     let currentComment = null;
-    let currentAuthor = null;
     
     const lines = text.split('\n');
     
     for (let i = 0; i < lines.length; i++) {
-      const line = lines[i].trim();
+      const line = lines[i];
       
-      if (line.startsWith('<@ @')) {
-        // 새로운 카드 시작
+      if (line.trim().startsWith('<@ @')) {
         currentCard = {
-          author: line.replace('<@ @', '').trim(),
+          author: line.trim().replace('<@ @', '').trim(),
           content: '',
           comments: []
         };
         cards.push(currentCard);
-      } else if (line === '@>') {
-        // 카드 종료
+      } else if (line.trim() === '@>') {
         currentCard = null;
-      } else if (line === '<#') {
-        // 본문 시작
+      } else if (line.trim() === '<#') {
         currentSection = 'content';
-      } else if (line === '#>') {
-        // 본문 종료
+      } else if (line.trim() === '#>') {
         currentSection = null;
-      } else if (line.startsWith('<## @')) {
-        // 댓글 시작
+      } else if (line.trim().startsWith('<## @')) {
         if (currentCard) {
           currentComment = {
-            author: line.replace('<## @', '').trim(),
+            author: line.trim().replace('<## @', '').trim(),
             content: ''
           };
           currentCard.comments.push(currentComment);
           currentSection = 'comment';
         }
-      } else if (line === '##>') {
-        // 댓글 종료
+      } else if (line.trim() === '##>') {
         currentSection = null;
         currentComment = null;
       } else if (currentCard && currentSection) {
-        // 내용 추가
         if (currentSection === 'content') {
           currentCard.content += line + '\n';
         } else if (currentSection === 'comment' && currentComment) {
@@ -87,6 +79,27 @@ const MDRenderer = ({ content }) => {
               <code className={className} {...props}>
                 {children}
               </code>
+            );
+          },
+          ul({ node, children, ...props }) {
+            let depth = 0;
+            let parent = node.parent;
+            while (parent) {
+              if (parent.type === 'list') depth++;
+              parent = parent.parent;
+            }
+            
+            return (
+              <ul className={`list-disc pl-${depth * 4} my-1`} {...props}>
+                {children}
+              </ul>
+            );
+          },
+          li({ node, children, ...props }) {
+            return (
+              <li className="my-0.5" {...props}>
+                {children}
+              </li>
             );
           }
         }}

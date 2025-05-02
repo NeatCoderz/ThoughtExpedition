@@ -31,43 +31,43 @@ date: "2025-05-02"
 
 애자일 철학의 기반을 다진 17명의 선배 개발자들이 어떤 사람들이길래 선언문을 발표했는지 궁금했다.
 
-- 기술과 방법론 창시자들
-    - 켄트 벡 (Kent Beck)
-        - XP(Extreme Programming) 창시자. JUnit 테스트 프레임워크 개발자. 테스트 주도 개발(TDD) 확산에 지대한 공헌.
-    - 제프 서덜랜드 (Jeff Sutherland)
-        - 스크럼(Scrum) 공동 창시자. 애자일 프레임워크의 실질적인 대중화 주역 중 하나.
-    - 켄 슈와버 (Ken Schwaber)
-        - 스크럼 공동 창시자. Agile Alliance 설립 주도. 애자일 교육과 인증 체계 확산에 기여.
-    - 알리스테어 콕번 (Alistair Cockburn)
-        - Crystal Methodologies 창시자. 인간 중심의 소프트웨어 개발, 커뮤니케이션의 중요성을 강조.
-    - 짐 하이스미스 (Jim Highsmith)
-        - Adaptive Software Development(ASD) 창시자. 유연성과 변화 수용을 핵심으로 한 접근법.
-- 개념 정립자, 영향력 있는 사상가
-    - 로버트 C. 마틴 (Robert C. Martin, Uncle Bob)
-        - ‘클린 코드’ 저자. SOLID 원칙 정립. 소프트웨어 공학 윤리와 품질 강조.
-    - 마틴 파울러 (Martin Fowler)
-        - 리팩토링, CI/CD, 엔터프라이즈 패턴 등 개념을 정리·대중화. ThoughtWorks 소속.
-    - 데이브 토마스 (Dave Thomas)
-        - ‘Pragmatic Programmer’ 공동 저자. 루비(Ruby) 언어 전파자. 실용적 개발 사고방식 전파.
-    - 앤드류 헌트 (Andrew Hunt)
-        - ‘Pragmatic Programmer’ 공동 저자. 개발자 역량 성장과 실용주의 강조.
-- 실천적 개발자, 현장 경험자
-    - 론 제프리스 (Ron Jeffries)
-        - XP 창립 멤버. TDD와 Pair Programming 전도사. 실제 프로젝트에서 애자일 적용 사례 다수.
-    - 워드 커닝햄 (Ward Cunningham)
-        - 위키(Wiki) 개념 창시자. **패턴 언어(Pattern Language)**를 소프트웨어에 도입.
-    - 제임스 그레닝 (James Grenning)
-        - 임베디드 시스템 분야의 TDD 전도사. ‘Test-Driven Development for Embedded C’ 저자.
-    - 마이크 비들 (Mike Beedle)
-        - 스크럼을 기업 수준으로 확장한 ‘Enterprise Scrum’ 개발. 애자일 비즈니스 적용 촉진자.
-    - 브라이언 매릭 (Brian Marick)
-        - 테스트 자동화 전문가. “Agile Testing” 철학 기반 제공자.
-    - 존 컨 (Jon Kern)
-        - 항공/방위 산업 출신 아키텍트. 객체지향 설계와 프로세스 개선 실무 경험 풍부.
-    - 아리 반 베네컴 (Arie van Bennekum)
-        - 네덜란드 출신. DSDM 방법론 실무자. 정부 및 공공 프로젝트에 애자일 적용.
-    - 스티브 멜러 (Steve Mellor)
-        - 객체지향 분석 및 모델링 방법론의 선구자. MDA (Model-Driven Architecture) 기여.
+### 기술과 방법론 창시자들
+- 켄트 벡 (Kent Beck)
+    - XP(Extreme Programming) 창시자. JUnit 테스트 프레임워크 개발자. 테스트 주도 개발(TDD) 확산에 지대한 공헌.
+- 제프 서덜랜드 (Jeff Sutherland)
+    - 스크럼(Scrum) 공동 창시자. 애자일 프레임워크의 실질적인 대중화 주역 중 하나.
+- 켄 슈와버 (Ken Schwaber)
+    - 스크럼 공동 창시자. Agile Alliance 설립 주도. 애자일 교육과 인증 체계 확산에 기여.
+- 알리스테어 콕번 (Alistair Cockburn)
+    - Crystal Methodologies 창시자. 인간 중심의 소프트웨어 개발, 커뮤니케이션의 중요성을 강조.
+- 짐 하이스미스 (Jim Highsmith)
+    - Adaptive Software Development(ASD) 창시자. 유연성과 변화 수용을 핵심으로 한 접근법.
+### 개념 정립자, 영향력 있는 사상가
+- 로버트 C. 마틴 (Robert C. Martin, Uncle Bob)
+    - ‘클린 코드’ 저자. SOLID 원칙 정립. 소프트웨어 공학 윤리와 품질 강조.
+- 마틴 파울러 (Martin Fowler)
+    - 리팩토링, CI/CD, 엔터프라이즈 패턴 등 개념을 정리·대중화. ThoughtWorks 소속.
+- 데이브 토마스 (Dave Thomas)
+    - ‘Pragmatic Programmer’ 공동 저자. 루비(Ruby) 언어 전파자. 실용적 개발 사고방식 전파.
+- 앤드류 헌트 (Andrew Hunt)
+    - ‘Pragmatic Programmer’ 공동 저자. 개발자 역량 성장과 실용주의 강조.
+### 실천적 개발자, 현장 경험자
+- 론 제프리스 (Ron Jeffries)
+    - XP 창립 멤버. TDD와 Pair Programming 전도사. 실제 프로젝트에서 애자일 적용 사례 다수.
+- 워드 커닝햄 (Ward Cunningham)
+    - 위키(Wiki) 개념 창시자. **패턴 언어(Pattern Language)**를 소프트웨어에 도입.
+- 제임스 그레닝 (James Grenning)
+    - 임베디드 시스템 분야의 TDD 전도사. ‘Test-Driven Development for Embedded C’ 저자.
+- 마이크 비들 (Mike Beedle)
+    - 스크럼을 기업 수준으로 확장한 ‘Enterprise Scrum’ 개발. 애자일 비즈니스 적용 촉진자.
+- 브라이언 매릭 (Brian Marick)
+    - 테스트 자동화 전문가. “Agile Testing” 철학 기반 제공자.
+- 존 컨 (Jon Kern)
+    - 항공/방위 산업 출신 아키텍트. 객체지향 설계와 프로세스 개선 실무 경험 풍부.
+- 아리 반 베네컴 (Arie van Bennekum)
+    - 네덜란드 출신. DSDM 방법론 실무자. 정부 및 공공 프로젝트에 애자일 적용.
+- 스티브 멜러 (Steve Mellor)
+    - 객체지향 분석 및 모델링 방법론의 선구자. MDA (Model-Driven Architecture) 기여.
 
 > 애자일을 따른다는 것 > 게임 체인저
 > .. 애자일이 생기자마자 다양한 커뮤니티에서 이를 대대적으로 수용 했다. ..
