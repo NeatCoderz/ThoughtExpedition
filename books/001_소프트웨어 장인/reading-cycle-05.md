@@ -6,7 +6,7 @@ date: "2025-06-01"
 <@ @SUMMARY
 <#
 🧠 TBD
-#>π
+#>
 <## @Distilled Sentence
 🧷 TBD
 ##>
